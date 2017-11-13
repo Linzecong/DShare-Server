@@ -16,7 +16,6 @@ public:
     RegistServer();
     ~RegistServer();
 
-
     QTcpServer* tcpServer;
     QTcpSocket *clientConnection;
 

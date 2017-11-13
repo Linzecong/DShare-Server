@@ -38,7 +38,6 @@ private:
 
 NewsServer::NewsServer(){
 
-
     LogFile.setFileName("./NewsLog.str");
     LogFile.open(QIODevice::WriteOnly|QIODevice::Append);
     if(LogFile.isOpen()){
@@ -48,14 +47,11 @@ NewsServer::NewsServer(){
     else
         qDebug()<<(QTime::currentTime().toString()+"  "+"LogOpenFail")<<endl;
 
-
-
     //登录数据库
 
     tcpServer = new QTcpServer(this);
     tcpServer->listen(QHostAddress::AnyIPv4,4567);
     connect(tcpServer,&QTcpServer::newConnection,this,&NewsServer::readMessage);
-
 
 }
 
@@ -68,7 +64,6 @@ void NewsServer::readMessage(){
 
     clientConnection.append(tcpServer->nextPendingConnection());
 
-
     LOG(QDateTime::currentDateTime().toString()+" "+"New Connection"+" "+clientConnection.last()->peerAddress().toString());
     connect(clientConnection.last(),&QTcpSocket::readyRead,this,&NewsServer::sendMessage);
     connect(clientConnection.last(),&QTcpSocket::disconnected,this,&NewsServer::removeSocket);
@@ -80,8 +75,6 @@ void NewsServer::sendMessage(){
         if(clientConnection[i]->bytesAvailable()>0){
             QString message=QString::fromUtf8(clientConnection[i]->readAll());
             qDebug()<<(message)<<endl;
-
-
 
 
             if(message.indexOf("@getnews@")>=0){
@@ -114,7 +107,6 @@ void NewsServer::sendMessage(){
 
             }
 
-
             if(message.indexOf("@getcontent@")>=0){
                 QStringList temp=message.split("@");
 
@@ -146,9 +138,7 @@ void NewsServer::sendMessage(){
                     clientConnection[i]->write(str.toUtf8());
                     return;
                 }
-
             }
-
 
             if(message.indexOf("@likenews@")>=0){
                 QStringList temp=message.split("@");
@@ -165,7 +155,6 @@ void NewsServer::sendMessage(){
                 QSqlQuery query;
                 query.exec("update news set likecount=likecount+1 where newsid =" +temp[2]);
                 if(query.lastError().type()==QSqlError::NoError){
-
 
                     QString str="@likenews@Succeed@";
                     LOG(QDateTime::currentDateTime().toString()+" "+str+" "+clientConnection[i]->peerAddress().toString());
@@ -186,10 +175,8 @@ void NewsServer::sendMessage(){
                 QStringList temp=message.split("@");
 
                 if(temp.length()>3){
-
                     QString str="@dislikenews@DBError@";
                     LOG(QDateTime::currentDateTime().toString()+" "+str+" "+clientConnection[i]->peerAddress().toString());
-
                     clientConnection[i]->write(str.toUtf8());
                     return;
 
@@ -214,10 +201,6 @@ void NewsServer::sendMessage(){
                 }
             }
 
-
-
-
-
             if(message.indexOf("@sendcomment@")>=0){
                 QStringList temp11=message.split("comment@");
                 QStringList temp=message.split("|||");
@@ -237,7 +220,6 @@ void NewsServer::sendMessage(){
 
                     clientConnection[i]->write(str.toUtf8());
                 }
-
 
 
                 if(query.lastError().type()==QSqlError::NoError&&temp11.length()<=2){
@@ -277,7 +259,6 @@ void NewsServer::sendMessage(){
                         query2.addBindValue(temp[1]);
                         query2.exec();
                     }
-
 
                     QString str="@sendcomment@Succeed@";
                     clientConnection[i]->write(str.toUtf8());

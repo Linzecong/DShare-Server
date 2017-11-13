@@ -1,5 +1,5 @@
 QT += core
-QT -= gui
+QT += gui
 
 CONFIG += c++11
 QT+=sql
@@ -22,4 +22,5 @@ HEADERS += \
     RecordServer.h \
     ReportServer.h \
     NewsServer.h \
-    RecommendServer.h
+    RecommendServer.h \
+    ImageServer.h

@@ -1,8 +1,8 @@
+/*数据服务器*/
+
 #ifndef DATASERVER_H
 #define DATASERVER_H
 #define LOG(x) qDebug()<<(x)<<endl;(*LogTextStream)<<(x)<<endl;
-
-
 
 #include <QtNetwork/QtNetwork>
 #include <QList>
@@ -19,7 +19,6 @@ public:
     DataServer();
     ~DataServer();
 
-
     QTcpServer* tcpServer;
     QList<QTcpSocket* > clientConnection;
 
@@ -28,17 +27,12 @@ public:
     void removeSocket();
 
 private:
-
-
     QFile LogFile;
     QTextStream* LogTextStream;
-
-
 
 };
 
 DataServer::DataServer(){
-
 
     LogFile.setFileName("./DataLog.str");
     LogFile.open(QIODevice::WriteOnly|QIODevice::Append);
@@ -49,21 +43,15 @@ DataServer::DataServer(){
     else
         qDebug()<<(QTime::currentTime().toString()+"  "+"LogOpenFail")<<endl;
 
-
-
     //登录数据库
-
 
     tcpServer = new QTcpServer(this);
     tcpServer->listen(QHostAddress::AnyIPv4,8889);
     connect(tcpServer,&QTcpServer::newConnection,this,&DataServer::readMessage);
 
-
-
 }
 
 DataServer::~DataServer(){
-
 
 }
 
@@ -106,7 +94,6 @@ void DataServer::sendMessage(){
                         clientConnection[i]->write(QString("@getname@Succeed@"+query.value(3).toString()).toUtf8());
                     }
 
-
                 }
             }
 
@@ -138,9 +125,6 @@ void DataServer::sendMessage(){
                     clientConnection[i]->write(QString("@gethead@Succeed@"+temp[1]).toUtf8());
                 }
             }
-
-
-
 
 
             if(message.indexOf("@changename@")!=-1){
@@ -214,8 +198,6 @@ void DataServer::sendMessage(){
             }
 
 
-
-
             if(message.indexOf("@addfollowing@")!=-1){
                 QStringList teststr=message.split("@");
                 QStringList temp=message.split("|||");
@@ -232,7 +214,6 @@ void DataServer::sendMessage(){
                     query.exec();
                     if(query.lastError().type()==QSqlError::NoError){
                         LOG(QDateTime::currentDateTime().toString()+" "+"addfollowing@Succeed"+" "+clientConnection[i]->peerAddress().toString());
-
 
                         if(temp[1]!=temp[2]){
                             QSqlQuery query2;
@@ -254,9 +235,6 @@ void DataServer::sendMessage(){
                     }
                 }
             }
-
-
-
 
             if(message.indexOf("@deletefollowing@")!=-1){
                 QStringList teststr=message.split("@");
@@ -284,7 +262,6 @@ void DataServer::sendMessage(){
                     }
                 }
             }
-
 
             if(message.indexOf("@getfollowings@")!=-1){
                 QStringList teststr=message.split("@");
@@ -320,13 +297,11 @@ void DataServer::sendMessage(){
                 }
             }
 
-
             if(message.indexOf("@getfollowers@")!=-1){
                 QStringList teststr=message.split("@");
                 QStringList temp=message.split("|||");
                 if(temp[1].length()<5||teststr.length()>3){
                     LOG(QDateTime::currentDateTime().toString()+" "+"getfollowers@MSGError"+" "+clientConnection[i]->peerAddress().toString());
-
                     clientConnection[i]->write(QString("@getfollowers@DBError@").toUtf8());
                 }
                 else{
@@ -338,7 +313,6 @@ void DataServer::sendMessage(){
                         clientConnection[i]->write(QString("@getfollowers@DBError@").toUtf8());
                     }
                     else{
-
                         QString str="@getfollowers@Succeed@";
                         do{
                             QSqlQuery query1;
@@ -350,8 +324,6 @@ void DataServer::sendMessage(){
 
                         clientConnection[i]->write(str.toUtf8());
                     }
-
-
                 }
             }
 
@@ -378,6 +350,7 @@ void DataServer::sendMessage(){
                     clientConnection[i]->write(str.toUtf8());
                 }
             }
+
 
             if(message.indexOf("@searchfood@")!=-1){
                 QStringList teststr=message.split("@");
@@ -424,7 +397,6 @@ void DataServer::sendMessage(){
 
                 QSqlQuery query;
                 query.exec("select * from fooddes where fooddes like \""+sstr+"\" limit 0,5");
-
 
                 if(query.size()==5)
                     isfull=1;
@@ -473,7 +445,6 @@ void DataServer::sendMessage(){
             }
 
 
-
             if(message.indexOf("@getfoodmsg@")!=-1){
                 QStringList teststr=message.split("@");
 
@@ -502,8 +473,6 @@ void DataServer::sendMessage(){
 
 
             }
-
-
 
             if(message.indexOf("@checkin@")!=-1){
                 QStringList teststr=message.split("@");
@@ -566,8 +535,6 @@ void DataServer::sendMessage(){
                 }
             }
 
-
-
             if(message.indexOf("@getcheckinday@")!=-1){
                 QStringList teststr=message.split("@");
                 QStringList temp=message.split("@");
@@ -622,8 +589,6 @@ void DataServer::sendMessage(){
 
                         QString str="@getnotices@Succeed@|||";
 
-
-
                         do{
                             QSqlQuery query1;
                             query1.exec("select * from userandpassword where username=\""+query.value(0).toString()+"\"");
@@ -639,7 +604,6 @@ void DataServer::sendMessage(){
 
                         clientConnection[i]->write(str.toUtf8());
                     }
-
 
                 }
             }
@@ -700,7 +664,6 @@ void DataServer::sendMessage(){
                 }
             }
 
-
             if(message.indexOf("@getgoodrelation@")!=-1){
                 QStringList teststr=message.split("@");
                 if(teststr.length()>3){
@@ -714,13 +677,11 @@ void DataServer::sendMessage(){
                     QSqlQuery query;
                     query.exec("select * from foodrelation where firstfood=\""+teststr[2]+"\" and type=\"1\"");
 
-
                     while(query.next()){
                         returnstr+=query.value(1).toString()+"|||"+query.value(3).toString()+"{|}";
                     }
 
                     LOG(QDateTime::currentDateTime().toString()+" "+"getgoodrelation@succed"+" "+clientConnection[i]->peerAddress().toString());
-
                     clientConnection[i]->write(returnstr.toUtf8());
 
                 }
@@ -747,7 +708,6 @@ void DataServer::sendMessage(){
                     LOG(QDateTime::currentDateTime().toString()+" "+"getbadrelation@succeed"+" "+clientConnection[i]->peerAddress().toString());
 
                     clientConnection[i]->write(returnstr.toUtf8());
-
                 }
             }
 
@@ -756,13 +716,12 @@ void DataServer::sendMessage(){
     }
 }
 
+
 void DataServer::removeSocket(){
     for(int i=0;i<clientConnection.length();i++)
         if(clientConnection[i]->state()==QAbstractSocket::UnconnectedState)
             clientConnection.removeAt(i);
 
 }
-
-
 
 #endif // DATASERVER_H

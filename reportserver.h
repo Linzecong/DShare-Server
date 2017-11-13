@@ -16,14 +16,11 @@ public:
     ReportServer();
     ~ReportServer();
 
-
     QTcpServer* tcpServer;
     QList<QTcpSocket* > clientConnection;
 
     QList<QStringList> clientDietList;
     QList<QStringList> clientExerciseList;
-
-
 
     void readMessage();
     void sendMessage();
@@ -49,8 +46,6 @@ ReportServer::ReportServer(){
     }
     else
         qDebug()<<(QTime::currentTime().toString()+"  "+"LogOpenFail")<<endl;
-
-
 
     //登录数据库
 

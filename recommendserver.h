@@ -15,8 +15,6 @@ QMap<QString,int> XZMap;
 QMap<QString,int> YYMap;
 
 
-
-
 class RecommendServer: public QObject{
 public:
     RecommendServer();

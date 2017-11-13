@@ -2,7 +2,6 @@
 #define LOGINSERVER_H
 #define LOG(x) qDebug()<<(x)<<endl;(*LogTextStream)<<(x)<<endl;
 
-
 #include <QtNetwork/QtNetwork>
 #include <QList>
 #include <QDateTime>
@@ -31,8 +30,6 @@ private:
     QFile LogFile;
     QTextStream* LogTextStream;
 
-
-
 };
 
 LoginServer::LoginServer(){
@@ -50,7 +47,7 @@ LoginServer::LoginServer(){
 
 
     //登录数据库
-
+    clientConnection=NULL;
 
     tcpServer = new QTcpServer(this);
     tcpServer->listen(QHostAddress::AnyIPv4,6666);
@@ -65,6 +62,9 @@ LoginServer::~LoginServer(){
 }
 
 void LoginServer::readMessage(){
+
+//    if(clientConnection!=NULL)
+//        delete clientConnection;//不敢调试…………
 
     clientConnection = tcpServer->nextPendingConnection();
     LOG(QDateTime::currentDateTime().toString()+"  "+"New Connection  "+clientConnection->peerAddress().toString());
@@ -103,7 +103,7 @@ void LoginServer::sendMessage(){
             else{
                 if(query.value(2).toString()==temp[2]){
 
-                    QString str="@denglu@Succeed@1.3";
+                    QString str="@denglu@Succeed@1.4";
                     LOG(QDateTime::currentDateTime().toString()+" "+str+" "+clientConnection->peerAddress().toString());
 
                     clientConnection->write(str.toUtf8());
