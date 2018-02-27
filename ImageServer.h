@@ -14,7 +14,7 @@ public:
     ImageServer(int a);
     ~ImageServer();
 
-
+    int servertype;
     QTcpServer* tcpServer;
     //QList<QTcpSocket* > clientConnection;
     QTcpSocket*  clientConnection;
@@ -53,7 +53,7 @@ private:
 
 ImageServer::ImageServer(int a){
 
-
+    servertype=a;
     LogFile.setFileName("./ImageLog.str");
     LogFile.open(QIODevice::WriteOnly|QIODevice::Append);
     if(LogFile.isOpen()){
@@ -219,35 +219,33 @@ void ImageServer::sendMessage(){
 
             localFile->close();
 
-            //                QImage img;
-            //                qDebug()<<fileName;
-            //                img.load(fileName);
-            //                double h=640/double(img.width());
-            //                h=h*double(img.height());
+            if(servertype==1234){
+                QImage img;
+                qDebug()<<fileName;
+                img.load(fileName);
+                double h=640/double(img.width());
+                h=h*double(img.height());
 
-            //                img=img.scaled(640,h);
-            //                QString nnFileName=fileName.left(fileName.lastIndexOf('.'));
-            //                nnFileName=nnFileName+"_temp.jpg";
-            //                qDebug()<<nnFileName;
-            //                img.save(nnFileName,"JPG",50);//非头像注释这里，下同
-
-
-            QImage img;
-            qDebug()<<fileName;
-            img.load(fileName);
-            QString nnFileName=fileName.left(fileName.indexOf('$'));
-            nnFileName=nnFileName+".jpg";
-            qDebug()<<nnFileName;
-            img.save(nnFileName,"JPG");
-
-
-
+                img=img.scaled(640,h);
+                QString nnFileName=fileName.left(fileName.lastIndexOf('.'));
+                nnFileName=nnFileName+"_temp.jpg";
+                qDebug()<<nnFileName;
+                img.save(nnFileName,"JPG",50);//非头像注释这里，下同
+            }
+            else{
+                QImage img;
+                qDebug()<<fileName;
+                img.load(fileName);
+                QString nnFileName=fileName.left(fileName.indexOf('$'));
+                nnFileName=nnFileName+".jpg";
+                qDebug()<<nnFileName;
+                img.save(nnFileName,"JPG");
+            }
             QString msg="@sendimage@Succeed@";
             clientConnection->write(msg.toUtf8());
             qDebug()<<(QTime::currentTime().toString()+"  "+"Receive succeed"+"  "+clientConnection->peerAddress().toString());
             (*LogTextStream)<<(QTime::currentTime().toString()+"  "+"Receive succeed"+"  "+clientConnection->peerAddress().toString())<<endl;
             clientConnection->disconnectFromHost();
-
 
         }
     }
